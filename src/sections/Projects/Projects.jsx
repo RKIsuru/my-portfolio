@@ -1,23 +1,63 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import { fetchRepos, fetchStars, fetchLastCommit, fetchCommitCount } from '../../services/githubService';
 
 const Projects = () => {
+  const [repos, setRepos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const loadRepos = async () => {
+      try {
+        const reposData = await fetchRepos();
+        const updatedRepos = await Promise.all(
+          reposData.map(async (repo) => {
+            const stars = await fetchStars(repo.name);
+            const lastCommit = await fetchLastCommit(repo.name);
+            const commitCount = await fetchCommitCount(repo.name);
+            return {
+              ...repo,
+              stars,
+              lastCommit,
+              commitCount
+            };
+          })
+        );
+        setRepos(updatedRepos);
+      } catch (err) {
+        setError('Failed to fetch repositories.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRepos();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
-    <>  
-        <section id="projects" className="bg-white dark:bg-gray-800 py-12">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Projects</h2>
-                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg">
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-white">Project Title</h3>
-                    <p className="mt-2 text-gray-600 dark:text-gray-300">Short description of the project.</p>
-                </div>
-                {/* Repeat for other projects */}
-                </div>
+    <section id='projects' className='className="bg-gray-100 dark:bg-gray-900 pt-20 h-screen"'>
+      <div className="projects-section">
+        <h2>My Projects</h2>
+        <div className="projects-grid">
+          {repos.map((repo) => (
+            <div key={repo.id} className="project-card">
+              <h3>{repo.name}</h3>
+              <p>{repo.description}</p>
+              <p>Stars: {repo.stars}</p>
+              <p>Last Commit: {repo.lastCommit}</p>
+              <p>Commits: {repo.commitCount}</p>
+              <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
+                View on GitHub
+              </a>
             </div>
-        </section>
-    </>
-  )
-}
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
 
-export default Projects
-
+export default Projects;
