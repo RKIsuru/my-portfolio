@@ -47,15 +47,6 @@ export const fetchStars = async (repoName) => {
   }
 };
 
-export const fetchLastCommit = async (repoName) => {
-  try {
-    const commits = await fetchCommits(repoName);
-    return commits[0] ? commits[0].commit.message : 'No commits found';
-  } catch (error) {
-    console.error('Error fetching last commit:', error);
-    throw error;
-  }
-};
 
 export const fetchCommitCount = async (repoName) => {
     try {
@@ -65,4 +56,18 @@ export const fetchCommitCount = async (repoName) => {
       console.error('Error fetching commit count:', error);
       throw error;
     }
+};
+
+export const fetchRepoLanguages = async (repoName) => {
+  try {
+    const response = await axios.get(`https://api.github.com/repos/rkisuru/${repoName}/languages`, {
+      headers: {
+        Authorization: `token ${GITHUB_TOKEN}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching repository languages:', error);
+    throw error;
+  }
 };
