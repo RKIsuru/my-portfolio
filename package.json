@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource/roboto-mono": "^5.0.19",
     "@fontsource/rubik": "^5.0.21",
+    "@formspree/react": "^2.5.1",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
