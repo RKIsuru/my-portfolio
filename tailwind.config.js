@@ -12,7 +12,9 @@ export default {
       fontFamily: {
         rubik: ['Rubik', 'san-serif'],
         robotoMono: ['Roboto Mono', 'monospace'],
-        xs: '480px',
+      },
+      screens: {
+        'xs': '480px'
       }
     },
   },
